@@ -2,15 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function Navbar() {
-  // Function to check if user is logged in
   const isLoggedIn = () => {
     return localStorage.getItem('user');
   };
-
-  // Function to handle logout
   const logout = () => {
     localStorage.removeItem('user');
-    // Redirect or refresh the page to reflect the logout state
     window.location.href = '/login';
   };
 

@@ -6,31 +6,17 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { urlThunk } from "../../redux/urlSlice";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
+
 const Home = () => {
   const dispatch = useDispatch();
-  const [status, setStatus] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const sm = useSelector((state) => state.url);
-  console.log(sm);
-  const [url, seturl] = useState("");
-  console.log("url", url);
+  const [isProcessing, setIsProcessing] = useState(false); // State to track if the URL is being processed
+  const [url, setUrl] = useState("");
   const [shortenedURL, setShortenedURL] = useState("");
-  const [redirect, setRedirect] = useState("bkjh");
-  const handleUrl = (e) => {
-    seturl(e.target.value);
-  };
+  const [status, setStatus] = useState(false);
 
-  const body = {
-    longURL: url,
-  };
-
-  let shortt = window.location.origin;
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(copied);
-
-    console.log(window.location.origin);
     if (!validURL.isWebUri(url)) {
       toast.error("Invalid url", {
         position: "top-right",
@@ -42,29 +28,56 @@ const Home = () => {
         draggable: true,
       });
     } else {
+      setIsProcessing(true); // Start processing
+      toast.info("Processing...", {
+        position: "top-right",
+        theme: "dark",
+        autoClose: false, // Prevent the toast from closing automatically
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
       dispatch(urlThunk(url))
         .then((res) => {
-          console.log(res);
-
           setShortenedURL(res.payload.data.shortURL);
-          setRedirect(res.payload.data.longURL);
-          console.log(redirect);
           setStatus(true);
-          return res;
+          toast.dismiss(); // Dismiss the 'Processing...' toast
+          toast.success("URL shortened successfully!", {
+            position: "top-right",
+            theme: "dark",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
         })
         .catch((err) => {
-          console.log(err);
-          return err.response;
+          toast.dismiss(); // Dismiss the 'Processing...' toast
+          toast.error("Error shortening URL", {
+            position: "top-right",
+            theme: "dark",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        })
+        .finally(() => {
+          setIsProcessing(false); // End processing
         });
     }
   };
 
   const handleReset = () => {
-    seturl("");
+    setUrl("");
+    setStatus(false);
+    setShortenedURL("");
   };
 
   const handleCopy = () => {
-    setCopied(true);
     toast.success("Copied to Clipboard", {
       position: "top-right",
       theme: "dark",
@@ -76,63 +89,52 @@ const Home = () => {
     });
   };
 
-  console.log(sm);
   return (
     <>
-      <div className="my-5 container text-center">
+      <div className="container">
         <h1 className="head">URL SHORTENER</h1>
-        <div className="my-5 text-center">
-          <form>
-            <div className="row text-center d-flex justify-content-center">
-              <div className="col-lg-8 col-md-8 col-sm-8 col-xs-8 col-8">
-                <div className="inputs">
-                  <input
-                    className="form-control form-control-lg"
-                    name="url"
-                    type="text"
-                    placeholder="Enter a URL"
-                    value={url}
-                    onChange={handleUrl}
-                  />
-                </div>
-              </div>
-            </div>
-            <button
-              className="my-3 btn btn-dark"
-              type="submit"
-              onClick={handleSubmit}
-            >
-              Shorten
-            </button>
-            <button
-              className="my-3 btn btn-danger"
-              style={{ marginLeft: "10px" }}
-              type="submit"
-              onClick={handleReset}
-            >
-              Reset
-            </button>
-          </form>
-          <div className="short-url">
-            <h1>SHORT URL : </h1>
-            <div className="text">
-              <a
-                href={`${"https://url-shortener-wkbn.onrender.com"}${shortenedURL}`}
-              >
-                {status ? `${shortenedURL}` : ""}
-              </a>{" "}
+        <form onSubmit={handleSubmit}>
+          <div className="input-field">
+            <input
+              className="form-control form-control-lg"
+              name="url"
+              type="text"
+              placeholder="Enter a URL"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              disabled={isProcessing} // Disable input while processing
+            />
+          </div>
+          <button className="button" type="submit" disabled={isProcessing}>
+            Shorten
+          </button>
+          <button className="button" type="button" onClick={handleReset} disabled={isProcessing}>
+            Reset
+          </button>
+          <div class="Create-account">
+          <Link to="/signup" className="link-one">
+            I don't have any account
+          </Link>
+          </div>
+        </form>
+        {status && (
+          <div className="">
+            <h1 className="head">SHORT URL:</h1>
+            <div className="">
+              <a href={`${"https://url-shortener-wkbn.onrender.com"}${shortenedURL}`}>
+                {shortenedURL}
+              </a>
             </div>
             <CopyToClipboard
-              className="copy"
               text={`${"https://url-shortener-wkbn.onrender.com"}${shortenedURL}`}
               onCopy={handleCopy}
             >
-              <button className="border-2 border-blue-500 text-blue-500 font-medium px-5 py-2 ml-4 rounded-md">
+              <button className="" disabled={!status || isProcessing}>
                 Copy URL to Clipboard
               </button>
             </CopyToClipboard>
           </div>
-        </div>
+        )}
       </div>
       <ToastContainer />
     </>

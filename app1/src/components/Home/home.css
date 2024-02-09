@@ -1,0 +1,73 @@
+.para {
+    font-size: 30px;
+    height: 60px;
+  }
+  
+  .short-url {
+    margin-top: 60px;
+  }
+  .inputs {
+    margin-top: 60px;
+  }
+  
+.input-field input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  
+}
+.input-field input::placeholder {
+  color: #e3dddd; 
+}
+  .head {
+    margin-bottom: -10px;
+    color: #f0f0f0;
+  }
+  .text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px;
+    display: block;
+  }
+  .copy {
+    margin-top: 30px;
+    height: 40px;
+    border-radius: 29px;
+background: linear-gradient(145deg, #bd9c9c, #e1b9b9);
+box-shadow:  6px 6px 8px #ae9090,
+             -6px -6px 8px #f6caca;
+    font-family: sans-serif;
+  }
+  
+  a {
+    text-decoration: none;
+    font-size: large;
+    color: blue;
+  }
+  button {
+    background: #e8bbbb;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    color: #000;
+    font-weight: 600;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 16px;
+    border: 2px solid transparent;
+    transition: 0.3s ease;
+  }
+  
+  button:hover {
+      border-radius: 5px;
+      text-transform: capitalize;
+      background: linear-gradient(145deg, #e8bbbb, #ffb854);
+      box-shadow:  5px 5px 17px #b6acac,
+                   -5px -5px 17px #ffffff;
+  }
